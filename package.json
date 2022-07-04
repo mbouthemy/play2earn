@@ -1,5 +1,5 @@
 {
-  "name": "typescript-components-by-rupert",
+  "name": "play2earn",
   "version": "1.0.0",
   "description": "A simple component library to demonstrate publishing to npm",
   "main": "index.js",
@@ -7,23 +7,21 @@
     "clean": "rm -rf dist",
     "build": "yarn clean && tsc && cp package.json README.md ./dist"
   },
+  "author": "mbouthemy",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fildon/typescript-components-by-rupert.git"
+    "url": "git+https://github.com/mbouthemy/play2earn.git"
   },
   "keywords": [
-    "react",
-    "typescript"
+    "Play2earn",
+    "Solana"
   ],
-  "author": {
-    "name": "Rupert Foggo McKay",
-    "url": "https://fildon.me/"
-  },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fildon/typescript-components-by-rupert/issues"
+    "url": "https://github.com/mbouthemy/play2earn/issues"
   },
-  "homepage": "https://github.com/fildon/typescript-components-by-rupert#readme",
+  "homepage": "https://github.com/mbouthemy/play2earn#readme",
+
   "devDependencies": {
     "@types/react": "^17.0.14",
     "react": "^17.0.2",
