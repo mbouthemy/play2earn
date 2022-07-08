@@ -144,7 +144,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                     if (data.status_game == gameAPIStatusEnum.PlayerOneHasBet) {
                         console.log('The player two is now betting.');
 
-                        acceptBetting(connection, wallet, signTransaction, gameID, playerUID, publicKey?.toBase58())
+                        acceptBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58())
                             .then((res: any) => {
                                 console.log('results', res);
                                 console.log('Signature of the betting: ', res)
