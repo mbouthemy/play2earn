@@ -128,7 +128,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
 
                     // In this case the username is the public key of the player
-                    initiateBetting(connection, wallet, signTransaction, gameID, playerUID, publicKey?.toBase58(), 'solana', '1')
+                    initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), 'solana', '1')
                         .then((res: any) => {
                             // TODO: Verify that there are no errors after the initiation of betting
                             console.log('Results from betting:::', res)

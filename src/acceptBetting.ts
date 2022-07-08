@@ -1,6 +1,7 @@
 // Player 2 accept the betting, the game can now start
 import { transferSolana } from "./transferSol";
 import { PublicKey, Connection } from "@solana/web3.js";
+import {addressChestPubKey} from "./constants";
 
 
 /**
@@ -9,21 +10,22 @@ import { PublicKey, Connection } from "@solana/web3.js";
  * @param connection 
  * @param wallet 
  * @param signTransaction 
+ * @param gameWebsiteHost 
  * @param gameId 
  * @param playerTwoUsername 
  * @param playerTwoPublicKeyString 
  */
-export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string) {
+export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string) {
     try {
         // @ts-ignore
-        const receiverPublicKey = new PublicKey(process.env.NEXT_PUBLIC_CHEST_PUBKEY);
+        const receiverPublicKey = new PublicKey(addressChestPubKey);
 
         const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction });
 
         console.log('Player 2 has accepted the bet', signature);
 
         // @ts-ignore
-        const bodyRequestAccept: BodyRequestAcceptWager = {game_website_host: process.env.NEXT_PUBLIC_WEBSITE_HOST, game_id: gameId,
+        const bodyRequestAccept: BodyRequestAcceptWager = {game_website_host: gameWebsiteHost, game_id: gameId,
             player_two_id: playerTwoUsername, player_two_public_key: playerTwoPublicKeyString,
             signature_transaction_two: signature
        }
