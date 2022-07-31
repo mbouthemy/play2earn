@@ -401,14 +401,14 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
         const bodyRequestGameStatus: BodyRequestStatusGame = {
             // @ts-ignore
-            game_website_host: process.env.NEXT_PUBLIC_WEBSITE_HOST, game_id: gameID
+            game_website_host: gameWebsiteHost, game_id: gameID
         }
 
         console.log('Checking the status of the game.', bodyRequestGameStatus);
 
 
         // Checking the status of the game
-        fetch(process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + '/game-status', {
+        fetch('api/game-status', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bodyRequestGameStatus)
