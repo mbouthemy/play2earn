@@ -3,7 +3,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { BodyRequestStatusGame } from "./BodyRequest";
 import { gameAPIStatusEnum } from "./Enums";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { useProgram } from "./useProgram";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { initiateBetting } from "./initBetting";
 import { acceptBetting } from "./AcceptBetting";
@@ -37,8 +36,6 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
     const [errorMessage, setErrorMessage] = useState("");
     const wallet = useWallet();
     const { publicKey, signTransaction } = useWallet();
-    // @ts-ignore
-    const { program } = useProgram({ connection, wallet });
 
 
     // Related to Solana Escrow
