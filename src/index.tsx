@@ -408,7 +408,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
 
         // Checking the status of the game
-        fetch('api/game-status', {
+        fetch('/api/game-status', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bodyRequestGameStatus)
