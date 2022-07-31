@@ -15,7 +15,7 @@ import {addressChestPubKey} from "./constants";
  * @param playerTwoUsername 
  * @param playerTwoPublicKeyString 
  */
-export async function acceptBettingFunction(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string) {
+export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string) {
     try {
         // @ts-ignore
         const receiverPublicKey = new PublicKey(addressChestPubKey);

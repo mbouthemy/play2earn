@@ -6,7 +6,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useProgram } from "./useProgram";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { initiateBetting } from "./initBetting";
-import { acceptBetting } from "./acceptBetting";
+import { acceptBetting } from "./AcceptBetting";
 
 interface IProps {
     gameWebsiteHost: string;
