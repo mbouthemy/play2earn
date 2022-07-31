@@ -13,10 +13,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 
-// @ts-ignore
-const idl = JSON.parse(process.env.NEXT_PUBLIC_IDL_STRINGIFY);
-const programID = new PublicKey(idl.metadata.address);
-
 
 export const addressChestPubKey: string = 'FAGSx7VdV8PZXfZs7n6NPYdt54uGHTykZ5WxzaUEaY91';
 
