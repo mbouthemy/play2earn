@@ -8,10 +8,10 @@ import {
     PublicKey,
     Transaction,
     TransactionCtorFields
-  } from "@solana/web3.js";
-  import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-  import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-  
+} from "@solana/web3.js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
 
 // @ts-ignore
 const idl = JSON.parse(process.env.NEXT_PUBLIC_IDL_STRINGIFY);
@@ -79,7 +79,7 @@ export interface BodyRequestFinishGame {
     winner: string;
     winner_pub_key: string;
     is_equality: boolean;
-} 
+}
 
 
 
@@ -104,10 +104,11 @@ export async function acceptBetting(connection: Connection, wallet: any, signTra
         console.log('Player 2 has accepted the bet', signature);
 
         // @ts-ignore
-        const bodyRequestAccept: BodyRequestAcceptWager = {game_website_host: gameWebsiteHost, game_id: gameId,
+        const bodyRequestAccept: BodyRequestAcceptWager = {
+            game_website_host: gameWebsiteHost, game_id: gameId,
             player_two_id: playerTwoUsername, player_two_public_key: playerTwoPublicKeyString,
             signature_transaction_two: signature
-       }
+        }
 
         // Accept the bet and request the API
         return fetch('/api/accept-wager', {
@@ -134,9 +135,6 @@ export async function acceptBetting(connection: Connection, wallet: any, signTra
 
 
 
-export const cancelBetting = () => {
-    console.log('Cancel the betting');
-}
 
 
 
@@ -162,15 +160,15 @@ export function finishGameAndGetMoneyWebThree(gameWebsiteHost: string, gameID: s
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyRequestFinishGame)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('signature', data);
-        return data;
-    })
-    .catch(error => {
-        console.log('error', error);
-        return 'error occured';
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('signature', data);
+            return data;
+        })
+        .catch(error => {
+            console.log('error', error);
+            return 'error occured';
+        });
 }
 
 // TODO: Check the case where the result is an error which is returned
@@ -237,31 +235,31 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
 export async function generateTransaction({
     connection,
     feePayer,
-  }: {
+}: {
     connection: Connection;
     feePayer: PublicKey;
-  }): Promise<Transaction> {
+}): Promise<Transaction> {
     const recentBlockhash = await connection.getRecentBlockhash();
     const options: TransactionCtorFields = {
-      feePayer,
-      recentBlockhash: recentBlockhash.blockhash,
+        feePayer,
+        recentBlockhash: recentBlockhash.blockhash,
     };
     const transaction = new Transaction(options);
     return transaction;
-  }
-  
-  export async function signAndSendTransaction(
+}
+
+export async function signAndSendTransaction(
     connection: Connection,
     signTransaction: SignerWalletAdapterProps["signTransaction"],
     transaction: Transaction
-  ): Promise<string> {
+): Promise<string> {
     const signedTrans = await signTransaction(transaction);
     const signature = await connection.sendRawTransaction(
-      signedTrans.serialize()
+        signedTrans.serialize()
     );
     return signature;
-  }
-  
+}
+
 
 
 /**
@@ -282,11 +280,11 @@ export async function transferSolana({
 
     // Add transfer instruction to transaction
     var transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: wallet.publicKey,
-        toPubkey: receiverPublicKey,
-        lamports: LAMPORTS_PER_SOL / 100,
-      })
+        SystemProgram.transfer({
+            fromPubkey: wallet.publicKey,
+            toPubkey: receiverPublicKey,
+            lamports: LAMPORTS_PER_SOL / 100,
+        })
     );
 
     // Setting the variables for the transaction
@@ -296,13 +294,13 @@ export async function transferSolana({
 
     // Transaction constructor initialized successfully
     if (transaction) {
-      console.log("Txn created successfully");
+        console.log("Txn created successfully");
     }
     // Sign transaction, broadcast, and confirm
     var signature = await signAndSendTransaction(
-      connection,
-      signTransaction,
-      transaction
+        connection,
+        signTransaction,
+        transaction
     );
 
     console.log("SIGNATURE", signature);
@@ -338,6 +336,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
     // Related to Solana Escrow
     const [secondsBeforeCancelling, setSecondsBeforeCancelling] = useState<number>(0);
+    const [isPlayerOneHasBet, setIsPlayerOneHasBet] = useState<boolean>(false);
 
 
     /**
@@ -362,7 +361,15 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
      */
     const playerOneHasBet = async () => {
         setSecondsBeforeCancelling(secondsBeforeCancellation);
+        setIsPlayerOneHasBet(true);
     }
+
+
+    const handleCancelBetting = () => {
+        console.log('Cancel the betting');
+        setIsPlayerOneHasBet(false);
+    }
+    
 
 
     /**
@@ -475,12 +482,20 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                 </h3>
                     </div>
 
+                    {isPlayerOneHasBet ?
+                        <button
+                            className="cursor-pointer py-2 px-4 rounded transition text-center text-purple-50 bg-yellow-700 disabled:opacity-30"
+                            onClick={() => handleCancelBetting()}
+                            disabled={secondsBeforeCancelling > 0}>Cancel betting.
+                                    ({secondsBeforeCancelling} seconds)
+                        </button>
+                        :
                         <button
                             className="cursor-pointer py-2 px-4 rounded transition text-center text-purple-50 bg-yellow-700 disabled:opacity-30"
                             onClick={() => betSolana()}>
                             Bet 10 Solana.
                         </button>
-
+                    }
                 </div>}
             <ToastContainer />
         </>
