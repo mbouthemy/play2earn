@@ -14,7 +14,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 
 
-export const addressChestPubKey: string = 'FAGSx7VdV8PZXfZs7n6NPYdt54uGHTykZ5WxzaUEaY91';
+export const addressChestPubKey: string = 'CmVo1zBHvB8BDbZwnTnDqt4iLmmMuPrKgd5fYXJNMbyk';
 
 
 
