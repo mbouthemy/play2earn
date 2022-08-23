@@ -20,9 +20,14 @@ export const addressChestPubKey: string = 'CmVo1zBHvB8BDbZwnTnDqt4iLmmMuPrKgd5fY
 
 interface IProps {
     gameWebsiteHost: string;
-    gameID: any;
-    playerUID: any;
+    gameID: string;
+    playerUID: string;
+    gameType: string;
+    numberMultiplayers: number;
     handleGameStarting: any;
+    blockchainType: string;
+    network: string;
+    amountBet: number;
     secondsBeforeCancellation: number;
 }
 
@@ -33,6 +38,33 @@ interface IProps {
 export enum gameAPIStatusEnum {
     PlayerOneHasBet = 'player_one_has_bet'
 }
+
+
+/**
+ * Enum for the blockchain type.
+ */
+export enum blockchainTypeEnum {
+    Solana = 'solana'
+}
+
+/**
+ * Enum for the network type.
+ */
+export enum networkTypeEnum {
+    Devnet = 'devnet',
+    Mainnet = 'mainnet'
+}
+
+
+/**
+ * Enum for the game type.
+ */
+export enum gameTypeEnum {
+    Solo = 'solo',
+    Multiplayer = 'multiplayer'
+}
+
+
 
 
 /**
@@ -90,12 +122,14 @@ export interface BodyRequestFinishGame {
  * @param playerTwoUsername 
  * @param playerTwoPublicKeyString 
  */
-export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string) {
+export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string,
+    amountBet: number) {
     try {
         // @ts-ignore
         const receiverPublicKey = new PublicKey(addressChestPubKey);
 
-        const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction });
+        const amountSol = amountBet;
+        const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction, amountSol });
 
         console.log('Player 2 has accepted the bet', signature);
 
@@ -181,24 +215,26 @@ export function finishGameAndGetMoneyWebThree(gameWebsiteHost: string, gameID: s
  * @param gameID
  * @param playerOneUsername 
  * @param playerOnePublicKeyString 
+ * @param gameType: string, Solo or multiplayer game 
  * @param blockchainType 
  * @param amountBet 
  */
 export async function initiateBetting(connection: Connection, wallet: any, signTransaction: SignerWalletAdapterProps["signTransaction"],
 
-    gameWebsiteHost: string, gameID: string, playerOneUsername: string, playerOnePublicKeyString: string, blockchainType: string, amountBet: string) {
+    gameWebsiteHost: string, gameID: string, playerOneUsername: string, playerOnePublicKeyString: string, gameType: string, blockchainType: string, network: string, amountBet: number) {
     try {
         // @ts-ignore
         const receiverPublicKey = new PublicKey(addressChestPubKey);
 
-        const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction });
+        const amountSol = amountBet;
+        const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction, amountSol });
 
         console.log('Player 1 has bet the money', signature);
 
         // @ts-ignore
         const bodyRequest: BodyRequestInitWager = {
             "game_website_host": gameWebsiteHost, "game_id": gameID,
-            "player_one_id": playerOneUsername, "player_one_public_key": playerOnePublicKeyString, "blockchain_type": blockchainType, "amount_bet": amountBet,
+            "player_one_id": playerOneUsername, "player_one_public_key": playerOnePublicKeyString, "blockchain_type": blockchainType, "amount_bet": String(amountBet),
             signature_transaction_one: signature
         }
 
@@ -267,11 +303,13 @@ export async function transferSolana({
     receiverPublicKey,
     wallet,
     signTransaction,
+    amountSol
 }: {
     connection: Connection;
     receiverPublicKey: PublicKey;
     wallet: any;
     signTransaction: SignerWalletAdapterProps["signTransaction"];
+    amountSol: number;
 }) {
 
     // Add transfer instruction to transaction
@@ -279,7 +317,7 @@ export async function transferSolana({
         SystemProgram.transfer({
             fromPubkey: wallet.publicKey,
             toPubkey: receiverPublicKey,
-            lamports: LAMPORTS_PER_SOL / 100,
+            lamports: amountSol * LAMPORTS_PER_SOL // Transfer in Lamports
         })
     );
 
@@ -307,19 +345,19 @@ export async function transferSolana({
 
 
 
-
 /**
  * Modal checking that both sides have the 16 chess pieces before starting the game.
  *
  * @param: gameWebsiteHost: the host of the game, used to distinguish the different requests
  * @param: gameID: any, the ID of the game
  * @param: playerUID: string, the name of the player
+ * @param: handleGameStarting: Callback after betting is done.
  * @param: secondsBeforeCancellation: number, the number of seconds before cancelling the game
- * @param: handleGameStarting: triggers the betting of the chess piece.
  *
  * @constructor
  */
-export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameStarting, secondsBeforeCancellation }: IProps) => {
+export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameStarting, gameType, numberMultiplayers = 2,
+        blockchainType = 'solana', network = 'devnet', amountBet = 0.1, secondsBeforeCancellation = 60 }: IProps) => {
 
 
     const [rpc, setRpc] = useState<string | null>(null);
@@ -353,7 +391,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
 
     /**
-     * Update the status of the player one in Firebase to change the thing so both player knows that he has bet.
+     * The first player has bet.
      */
     const playerOneHasBet = async () => {
         setSecondsBeforeCancelling(secondsBeforeCancellation);
@@ -361,11 +399,14 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
     }
 
 
+    /**
+     * Cancel the betting in case of a multiplayer game.
+     */
     const handleCancelBetting = () => {
         console.log('Cancel the betting');
         setIsPlayerOneHasBet(false);
     }
-    
+
 
 
     /**
@@ -379,15 +420,14 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
         }
     }, [secondsBeforeCancelling]);
 
+
     /**
-     * Bet your chess piece with the other player.
-     * It is basically an escrow of the NFT (Alice) in exchange for 0 SOL. (Bob)
+     * Bet your chess piece with the other player in case of a multiplayer game.
+     * 
      */
-    const betSolana = async () => {
+    const betSolanaMultiplayer = async () => {
 
         console.log('Game ID', gameID);
-
-        setErrorMessage("");
 
         if (!publicKey || !signTransaction) {
 
@@ -409,6 +449,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
         console.log('Checking the status of the game.', bodyRequestGameStatus);
 
+        // TODO: Move the logic of checking the game status in the backend.
 
         // Checking the status of the game
         fetch('/api/game-status', {
@@ -426,7 +467,8 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
 
                     // In this case the username is the public key of the player
-                    initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), 'solana', '1')
+                    initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(),
+                     gameType, blockchainType, network, amountBet)
                         .then((res: any) => {
                             // TODO: Verify that there are no errors after the initiation of betting
                             console.log('Results from betting:::', res)
@@ -442,7 +484,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                     if (data.status_game == gameAPIStatusEnum.PlayerOneHasBet) {
                         console.log('The player two is now betting.');
 
-                        acceptBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58())
+                        acceptBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), amountBet)
                             .then((res: any) => {
                                 console.log('results', res);
                                 console.log('Signature of the betting: ', res)
@@ -459,13 +501,43 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
             });
     }
 
+    /**
+     * Bet SOL money in a solo game by sending a JSON request to the backend.
+     */
+    const betSolanaSolo = async () => {
+
+        if (!publicKey || !signTransaction) {
+
+            toast.error('Wallet is not connected properly. Re-connect your wallet.', {
+                position: "top-right",
+                autoClose: 5000,
+                closeOnClick: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+
+        // In this case the username is the public key of the player
+        initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), gameType, blockchainType, network, amountBet)
+        .then((res: any) => {
+            // TODO: Verify that there are no errors after the initiation of betting
+            console.log('Results from betting for a solo game:::', res)
+            handleGameStarting();
+
+            // TODO: In case of an error, display the error message.
+            // toast.error((e as Error).message);
+        })
+    }
+
+
     return (
         <>
             {!wallet.connected &&
                 <>
                     <p style={{ fontSize: '22px', fontStyle: 'italic' }} className="mt-4">
                         Please connect your Solana wallet first.
-      </p>
+                    </p>
                     <WalletMultiButton />
                 </>
             }
@@ -475,7 +547,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                     <div className="p-4 sm:px-0">
                         <h3 className="text-lg font-medium leading-6 text-gray-900">
                             Time to bet some Solana.
-                </h3>
+                    </h3>
                     </div>
 
                     {isPlayerOneHasBet ?
@@ -488,8 +560,14 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                         :
                         <button
                             className="cursor-pointer py-2 px-4 rounded transition text-center text-purple-50 bg-yellow-700 disabled:opacity-30"
-                            onClick={() => betSolana()}>
-                            Bet 10 Solana.
+                            onClick={() => {
+                                if (gameType === gameTypeEnum.Multiplayer) {
+                                    betSolanaMultiplayer();
+                                } else {
+                                    betSolanaSolo();
+                                }
+                            }}>
+                            Bet {amountBet} SOL.
                         </button>
                     }
                 </div>}
