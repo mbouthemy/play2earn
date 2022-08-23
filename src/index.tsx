@@ -23,12 +23,12 @@ interface IProps {
     gameID: string;
     playerUID: string;
     gameType: string;
-    numberMultiplayers: number;
+    numberMultiplayers?: number;
     handleGameStarting: any;
-    blockchainType: string;
-    network: string;
-    amountBet: number;
-    secondsBeforeCancellation: number;
+    blockchainType?: string;
+    network?: string;
+    amountBet?: number;
+    secondsBeforeCancellation?: number;
 }
 
 
