@@ -1,6 +1,6 @@
 {
   "name": "play2earn",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Convert any web2 game in play2earn game",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -40,8 +40,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.7.4",
     "react": "^17.0.2",
-    "react-dom": "17.0.2",
-    "react-toastify": "^9.0.5"
+    "react-dom": "17.0.2"
   },
   "files": [
     "lib/**/*"
@@ -53,6 +52,7 @@
     "@solana/wallet-adapter-react-ui": "^0.5.0",
     "@solana/wallet-adapter-wallets": "^0.10.0",
     "@solana/web3.js": "^1.29.2",
-    "bignumber.js": "^9.0.1"
+    "bignumber.js": "^9.0.1",
+    "react-toastify": "^8.2.0"
   }
 }
