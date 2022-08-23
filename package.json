@@ -1,6 +1,6 @@
 {
   "name": "play2earn",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Convert any web2 game in play2earn game",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
