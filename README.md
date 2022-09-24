@@ -10,6 +10,11 @@ Play2earn is a pacjage used to convert any Nextjs game into a play2earn game wit
 
 ## Demonstration
 
+An example of a 2048 Game (solo) converted into play2earn (if you finish it under a time period) can be found here:
+
+[2048 To Earn Demo](https://2048-to-earn.web-2-to-3.com)
+
+
 An example of a chess game converted to a chess2earn game (between two players) can be found here:
 
 [Chess2Earn Demonstration](https://chess2earn.web-2-to-3.com)
