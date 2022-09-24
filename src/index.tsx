@@ -270,7 +270,7 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
                 return error;
             });
 
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
         toast.error(e);
     }
