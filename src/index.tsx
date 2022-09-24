@@ -11,7 +11,8 @@ import {
 } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-
+import { FidgetSpinner } from  'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 
 export const addressChestPubKey: string = 'CmVo1zBHvB8BDbZwnTnDqt4iLmmMuPrKgd5fYXJNMbyk';
@@ -79,6 +80,7 @@ export interface BodyRequestInitWager {
     amount_bet: string;
     signature_transaction_one: string;
     game_type: gameTypeEnum;
+    network: networkTypeEnum;
 }
 
 
@@ -234,13 +236,18 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
 
         console.log('Player 1 has bet the money', signature);
 
+        // TODO: Pass the enum to the modal (check to see how is it possible)
+
         const bodyRequest: BodyRequestInitWager = {
-            "game_website_host": gameWebsiteHost, "game_id": gameID,
-            "player_one_id": playerOneUsername, "player_one_public_key": playerOnePublicKeyString,
+            "game_website_host": gameWebsiteHost, 
+            "game_id": gameID,
+            "player_one_id": playerOneUsername,
+            "player_one_public_key": playerOnePublicKeyString,
             "blockchain_type": blockchainType,
             "amount_bet": String(amountBet),
             "signature_transaction_one": signature,
             "game_type": gameType === 'solo' ? gameTypeEnum.Solo : gameTypeEnum.Solo,
+            "network": network === 'devnet' ? networkTypeEnum.Devnet : networkTypeEnum.Mainnet,
         }
 
 
@@ -377,6 +384,10 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
     const [secondsBeforeCancelling, setSecondsBeforeCancelling] = useState<number>(0);
     const [isPlayerOneHasBet, setIsPlayerOneHasBet] = useState<boolean>(false);
 
+    // Related to Display
+    const [isSpinnerLoading, setIsSpinnerLoading] = useState<boolean>(false);
+
+
 
     /**
      * Display a toast message for the connection to the cluster.
@@ -510,6 +521,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
      * Bet SOL money in a solo game by sending a JSON request to the backend.
      */
     const betSolanaSolo = async () => {
+        setIsSpinnerLoading(true);
 
         if (!publicKey || !signTransaction) {
 
@@ -528,11 +540,28 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
         .then((res: any) => {
             // TODO: Verify that there are no errors after the initiation of betting
             console.log('Results from betting for a solo game:::', res)
+            setIsSpinnerLoading(false);
             handleGameStarting();
 
             // TODO: In case of an error, display the error message.
             // toast.error((e as Error).message);
         })
+    }
+
+    // Just return a spinnner in case it is loading.
+    if (isSpinnerLoading) {
+        return (
+            <FidgetSpinner
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+                ballColors={['#ff0000', '#00ff00', '#0000ff']}
+                backgroundColor="#F4442E"
+            />
+        )
     }
 
 
