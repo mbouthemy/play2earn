@@ -78,6 +78,7 @@ export interface BodyRequestInitWager {
     blockchain_type: string;
     amount_bet: string;
     signature_transaction_one: string;
+    game_type: gameTypeEnum;
 }
 
 
@@ -180,8 +181,10 @@ export async function acceptBetting(connection: Connection, wallet: any, signTra
 export function finishGameAndGetMoneyWebThree(gameWebsiteHost: string, gameID: string, winnerUsername: string, winnerPublickKey: string, isEquality: boolean) {
 
     const bodyRequestFinishGame: BodyRequestFinishGame = {
-        // @ts-ignore
-        game_website_host: gameWebsiteHost, game_id: gameID, winner: winnerUsername, winner_pub_key: winnerPublickKey,
+        game_website_host: gameWebsiteHost,
+        game_id: gameID,
+        winner: winnerUsername,
+        winner_pub_key: winnerPublickKey,
         is_equality: isEquality
     }
     console.log('Finishing the game', bodyRequestFinishGame);
@@ -231,11 +234,13 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
 
         console.log('Player 1 has bet the money', signature);
 
-        // @ts-ignore
         const bodyRequest: BodyRequestInitWager = {
             "game_website_host": gameWebsiteHost, "game_id": gameID,
-            "player_one_id": playerOneUsername, "player_one_public_key": playerOnePublicKeyString, "blockchain_type": blockchainType, "amount_bet": String(amountBet),
-            signature_transaction_one: signature
+            "player_one_id": playerOneUsername, "player_one_public_key": playerOnePublicKeyString,
+            "blockchain_type": blockchainType,
+            "amount_bet": String(amountBet),
+            "signature_transaction_one": signature,
+            "game_type": gameType === 'solo' ? gameTypeEnum.Solo : gameTypeEnum.Solo,
         }
 
 
