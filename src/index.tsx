@@ -12,7 +12,6 @@ import {
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { FidgetSpinner } from  'react-loader-spinner'
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 
 export const addressChestPubKey: string = 'CmVo1zBHvB8BDbZwnTnDqt4iLmmMuPrKgd5fYXJNMbyk';
@@ -126,21 +125,25 @@ export interface BodyRequestFinishGame {
  * @param playerTwoPublicKeyString 
  */
 export async function acceptBetting(connection: Connection, wallet: any, signTransaction: any, gameWebsiteHost: string, gameId: string, playerTwoUsername: string, playerTwoPublicKeyString: string,
-    amountBet: number) {
+    amountBet: number, blockchainType: string) {
     try {
         // @ts-ignore
         const receiverPublicKey = new PublicKey(addressChestPubKey);
 
-        const amountSol = amountBet;
+        const amountSol = amountBet;  // In Sol
         const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction, amountSol });
 
         console.log('Player 2 has accepted the bet', signature);
 
-        // @ts-ignore
         const bodyRequestAccept: BodyRequestAcceptWager = {
-            game_website_host: gameWebsiteHost, game_id: gameId,
-            player_two_id: playerTwoUsername, player_two_public_key: playerTwoPublicKeyString,
-            signature_transaction_two: signature
+            game_website_host: gameWebsiteHost, 
+            game_id: gameId,
+            player_two_id: playerTwoUsername, 
+            player_two_public_key: playerTwoPublicKeyString,
+            signature_transaction_two: signature,
+            blockchain_type: blockchainType,
+            amount_bet: String(amountBet)
+        
         }
 
         // Accept the bet and request the API
@@ -269,9 +272,8 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
 
     } catch (e) {
         console.error(e);
-        // toast.error((e as Error).message);
+        toast.error(e);
     }
-
 }
 
 
@@ -364,6 +366,10 @@ export async function transferSolana({
  * @param: gameID: any, the ID of the game
  * @param: playerUID: string, the name of the player
  * @param: handleGameStarting: Callback after betting is done.
+ * @param: numberMultiplayers: Number of multiplayers in case of multiplayer gameType (default is 2).
+ * @param: blockchaintType: string, default is 'solana'.
+ * @param: network: string, name of the network (default is 'devnet').
+ * @param: amountBet: number in Sol (default is 0.1).
  * @param: secondsBeforeCancellation: number, the number of seconds before cancelling the game
  *
  * @constructor
@@ -500,7 +506,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                     if (data.status_game == gameAPIStatusEnum.PlayerOneHasBet) {
                         console.log('The player two is now betting.');
 
-                        acceptBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), amountBet)
+                        acceptBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), amountBet, blockchainType)
                             .then((res: any) => {
                                 console.log('results', res);
                                 console.log('Signature of the betting: ', res)
@@ -535,17 +541,16 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
             return;
         }
 
-        // In this case the username is the public key of the player
         initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), gameType, blockchainType, network, amountBet)
         .then((res: any) => {
             // TODO: Verify that there are no errors after the initiation of betting
             console.log('Results from betting for a solo game:::', res)
             setIsSpinnerLoading(false);
             handleGameStarting();
-
-            // TODO: In case of an error, display the error message.
-            // toast.error((e as Error).message);
-        })
+        }).catch((error) => {
+            console.log("Error: ", error);
+            toast.error(error);
+        });
     }
 
     // Just return a spinnner in case it is loading.
