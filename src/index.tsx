@@ -109,6 +109,7 @@ export interface BodyRequestFinishGame {
     winner: string;
     winner_pub_key: string;
     is_equality: boolean;
+    is_game_master_winner_solo_game?: boolean;
 }
 
 
@@ -177,20 +178,23 @@ export async function acceptBetting(connection: Connection, wallet: any, signTra
 /**
  * Finish the game and send the transaction to the backend.
  * 
- * @param gameWebsiteHost 
- * @param gameID 
- * @param winnerUsername 
- * @param winnerPublickKey 
- * @param isEquality 
+ * @param gameWebsiteHost: string, the game website host
+ * @param gameID*: string, the ID of the game launched
+ * @param winnerUsername: the winner username
+ * @param winnerPublickKey: string; the public key of the winner (to be deprecated)
+ * @param isEquality: boolean, in case of equality, send the money to both 
+ * @param isGameMasterWinnerForSoloGame: boolean, for solo game, is game master the winner 
  */
-export function finishGameAndGetMoneyWebThree(gameWebsiteHost: string, gameID: string, winnerUsername: string, winnerPublickKey: string, isEquality: boolean) {
+export function finishGameAndGetMoneyWebThree(gameWebsiteHost: string, gameID: string, winnerUsername: string, winnerPublickKey: string, isEquality: boolean,
+    isGameMasterWinnerForSoloGame: boolean = false) {
 
     const bodyRequestFinishGame: BodyRequestFinishGame = {
         game_website_host: gameWebsiteHost,
         game_id: gameID,
         winner: winnerUsername,
         winner_pub_key: winnerPublickKey,
-        is_equality: isEquality
+        is_equality: isEquality,
+        is_game_master_winner_solo_game: isGameMasterWinnerForSoloGame
     }
     console.log('Finishing the game', bodyRequestFinishGame);
     return fetch('/api/finish-game', {
@@ -231,8 +235,7 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
 
     gameWebsiteHost: string, gameID: string, playerOneUsername: string, playerOnePublicKeyString: string, gameType: string, blockchainType: string, network: string, amountBet: number) {
     try {
-        // @ts-ignore
-        const receiverPublicKey = new PublicKey(addressChestPubKey);
+        const receiverPublicKey: PublicKey = new PublicKey(addressChestPubKey);
 
         const amountSol = amountBet;
         const signature = await transferSolana({ connection, receiverPublicKey, wallet, signTransaction, amountSol });
@@ -448,8 +451,6 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
      * 
      */
     const betSolanaMultiplayer = async () => {
-
-        console.log('Game ID', gameID);
 
         if (!publicKey || !signTransaction) {
 
