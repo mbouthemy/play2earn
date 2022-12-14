@@ -22,10 +22,6 @@ An example of a 2048 Game (solo) converted into play2earn (if you finish it unde
 
 [2048 To Earn Demo](https://2048-to-earn.web-2-to-3.com)
 
-The code associated is available here:
-
-[2048ToEarn - Code](https://github.com/mbouthemy/chess2earn-example)
-
 
 ### Multiplayer Game
 
