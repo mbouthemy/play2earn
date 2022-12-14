@@ -1,19 +1,33 @@
 # Play2Earn
 
 
-Play2earn is a pacjage used to convert any Nextjs game into a play2earn game with Solana blockchain integration.
+Play2earn is a package used to convert any Nextjs game into a play2earn game with Solana blockchain integration.
 
 - Integrate with solo games
 - Integrate with multiplayer games
 - No knowledge of Solana / Rust / Blockchain required
 - Possibility to switch between Devnet and Mainnet easily
 
+
+You can read the documentation here:
+
+[Documentation Web2To3](https://docs.web-2-to-3.com)
+
+
 ## Demonstration
+
+### Solo Game
 
 An example of a 2048 Game (solo) converted into play2earn (if you finish it under a time period) can be found here:
 
 [2048 To Earn Demo](https://2048-to-earn.web-2-to-3.com)
 
+The code associated is available here:
+
+[2048ToEarn - Code](https://github.com/mbouthemy/chess2earn-example)
+
+
+### Multiplayer Game
 
 An example of a chess game converted to a chess2earn game (between two players) can be found here:
 
@@ -137,7 +151,7 @@ The number of seconds the player 1 has to wait before cancelling his bet in case
     npm version patch
     npm publish
 
-## Useful links
+## Useful links - Documentation
 
 - [Documentation Web2To3](https://docs.web-2-to-3.com)
 
