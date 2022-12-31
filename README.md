@@ -20,7 +20,7 @@ You can read the documentation here:
 
 An example of a 2048 Game (solo) converted into play2earn (if you finish it under a time period) can be found here:
 
-[2048 To Earn Demo](https://2048-to-earn.web-2-to-3.com)
+[2048 To Earn Demo](https://game-2048-web2to3.herokuapp.com/)
 
 The code can be found here:
 
