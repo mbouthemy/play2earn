@@ -252,7 +252,7 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
             "blockchain_type": blockchainType,
             "amount_bet": String(amountBet),
             "signature_transaction_one": signature,
-            "game_type": gameType === 'solo' ? gameTypeEnum.Solo : gameTypeEnum.Solo,
+            "game_type": gameType === 'solo' ? gameTypeEnum.Solo : gameTypeEnum.Multiplayer,
             "network": network === 'devnet' ? networkTypeEnum.Devnet : networkTypeEnum.Mainnet,
         }
 
@@ -363,7 +363,8 @@ export async function transferSolana({
 
 
 /**
- * Modal checking that both sides have the 16 chess pieces before starting the game.
+ * Play2Earn modal used to convert any type of web2 games into a web3 game with the Solana Blockchain.
+ * The player can wage money that he will finish the game.
  *
  * @param: gameWebsiteHost: the host of the game, used to distinguish the different requests
  * @param: gameID: any, the ID of the game
@@ -373,7 +374,7 @@ export async function transferSolana({
  * @param: blockchaintType: string, default is 'solana'.
  * @param: network: string, name of the network (default is 'devnet').
  * @param: amountBet: number in Sol (default is 0.1).
- * @param: secondsBeforeCancellation: number, the number of seconds before cancelling the game
+ * @param: secondsBeforeCancellation: number, the number of seconds before cancelling the game (for multiplayer game)
  *
  * @constructor
  */
