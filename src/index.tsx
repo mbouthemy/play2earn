@@ -11,7 +11,7 @@ import {
 } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { FidgetSpinner } from  'react-loader-spinner'
+import { TailSpin } from 'react-loader-spinner'
 
 
 export const addressChestPubKey: string = 'CmVo1zBHvB8BDbZwnTnDqt4iLmmMuPrKgd5fYXJNMbyk';
@@ -137,14 +137,14 @@ export async function acceptBetting(connection: Connection, wallet: any, signTra
         console.log('Player 2 has accepted the bet', signature);
 
         const bodyRequestAccept: BodyRequestAcceptWager = {
-            game_website_host: gameWebsiteHost, 
+            game_website_host: gameWebsiteHost,
             game_id: gameId,
-            player_two_id: playerTwoUsername, 
+            player_two_id: playerTwoUsername,
             player_two_public_key: playerTwoPublicKeyString,
             signature_transaction_two: signature,
             blockchain_type: blockchainType,
             amount_bet: String(amountBet)
-        
+
         }
 
         // Accept the bet and request the API
@@ -245,7 +245,7 @@ export async function initiateBetting(connection: Connection, wallet: any, signT
         // TODO: Pass the enum to the modal (check to see how is it possible)
 
         const bodyRequest: BodyRequestInitWager = {
-            "game_website_host": gameWebsiteHost, 
+            "game_website_host": gameWebsiteHost,
             "game_id": gameID,
             "player_one_id": playerOneUsername,
             "player_one_public_key": playerOnePublicKeyString,
@@ -379,7 +379,7 @@ export async function transferSolana({
  * @constructor
  */
 export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameStarting, gameType, numberMultiplayers = 2,
-        blockchainType = 'solana', network = 'devnet', amountBet = 0.1, secondsBeforeCancellation = 60 }: IProps) => {
+    blockchainType = 'solana', network = 'devnet', amountBet = 0.1, secondsBeforeCancellation = 60 }: IProps) => {
 
 
     const [rpc, setRpc] = useState<string | null>(null);
@@ -492,7 +492,7 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
                     // In this case the username is the public key of the player
                     initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(),
-                     gameType, blockchainType, network, amountBet)
+                        gameType, blockchainType, network, amountBet)
                         .then((res: any) => {
                             // TODO: Verify that there are no errors after the initiation of betting
                             console.log('Results from betting:::', res)
@@ -544,29 +544,29 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
         }
 
         initiateBetting(connection, wallet, signTransaction, gameWebsiteHost, gameID, playerUID, publicKey?.toBase58(), gameType, blockchainType, network, amountBet)
-        .then((res: any) => {
-            // TODO: Verify that there are no errors after the initiation of betting
-            console.log('Results from betting for a solo game:::', res)
-            setIsSpinnerLoading(false);
-            handleGameStarting();
-        }).catch((error) => {
-            console.log("Error: ", error);
-            toast.error(error);
-        });
+            .then((res: any) => {
+                // TODO: Verify that there are no errors after the initiation of betting
+                console.log('Results from betting for a solo game:::', res)
+                setIsSpinnerLoading(false);
+                handleGameStarting();
+            }).catch((error) => {
+                console.log("Error: ", error);
+                toast.error(error);
+            });
     }
 
     // Just return a spinnner in case it is loading.
     if (isSpinnerLoading) {
         return (
-            <FidgetSpinner
-                visible={true}
+            <TailSpin
                 height="80"
                 width="80"
-                ariaLabel="dna-loading"
+                color="#6A82FB"
+                ariaLabel="tail-spin-loading"
+                radius="1"
                 wrapperStyle={{}}
-                wrapperClass="dna-wrapper"
-                ballColors={['#ff0000', '#00ff00', '#0000ff']}
-                backgroundColor="#F4442E"
+                wrapperClass=""
+                visible={true}
             />
         )
     }
@@ -574,45 +574,113 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
 
     return (
         <>
-            {!wallet.connected &&
-                <>
-                    <p style={{ fontSize: '22px', fontStyle: 'italic' }} className="mt-4">
-                        Please connect your Solana wallet first.
-                    </p>
-                    <WalletMultiButton />
-                </>
-            }
-            {wallet.connected &&
-                <div
-                    className="border-4 border-yellow-700 rounded-xl my-16 p-12 flex flex-col justify-center items-center">
-                    <div className="p-4 sm:px-0">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900">
-                            Time to bet some Solana.
-                    </h3>
-                    </div>
+            <div id='play2earn-card-container' style={{
+                width: '500px',
+                minHeight: '100px',
+                borderRadius: '10px',
+                boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.25)',
+                background: 'linear-gradient(#FC5C7D, #b46fbb)',
+                display: 'flex',
+                flexDirection: 'column',
+                textAlign: 'center'
+            }}>
+                <p style={{ fontSize: '18px', color: "#ffffff", fontWeight: 'bold', marginTop: '2px' }}>Play2Earn Modal by Web2to3&copy; </p>
 
-                    {isPlayerOneHasBet ?
-                        <button
-                            className="cursor-pointer py-2 px-4 rounded transition text-center text-purple-50 bg-yellow-700 disabled:opacity-30"
-                            onClick={() => handleCancelBetting()}
-                            disabled={secondsBeforeCancelling > 0}>Cancel betting.
-                                    ({secondsBeforeCancelling} seconds)
-                        </button>
-                        :
-                        <button
-                            className="cursor-pointer py-2 px-4 rounded transition text-center text-purple-50 bg-yellow-700 disabled:opacity-30"
-                            onClick={() => {
-                                if (gameType === gameTypeEnum.Multiplayer) {
-                                    betSolanaMultiplayer();
-                                } else {
-                                    betSolanaSolo();
-                                }
-                            }}>
-                            Bet {amountBet} SOL.
-                        </button>
-                    }
-                </div>}
+                {!wallet.connected &&
+                    <>
+                        <WalletMultiButton />
+                    </>
+                }
+
+                {wallet.connected &&
+                    <>
+                        {isSpinnerLoading ?
+                            <TailSpin
+                                height="80"
+                                width="80"
+                                color="#6A82FB"
+                                ariaLabel="tail-spin-loading"
+                                radius="1"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                visible={true}
+                            />
+                            :
+                            <>
+                                {isPlayerOneHasBet ?
+                                    // TODO: Work on this one and create modular style
+                                    // The player1 is waiting for player2
+                                    <div id='cancel-wage-container' style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <button id='cancel-button'
+                                            style={{
+                                                backgroundColor: '#4e44ce',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontWeight: 'bold',
+                                                width: '200px',
+                                                color: 'white',
+                                                padding: '15px 32px',
+                                                textDecoration: 'none',
+                                                fontSize: '16px',
+                                                textAlign: 'center',
+                                                transitionDuration: '0.4s',
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => handleCancelBetting()}
+                                            disabled={secondsBeforeCancelling > 0}
+                                        >
+                                            Cancel betting. ({secondsBeforeCancelling} seconds)
+                            </button>
+                                    </div>
+                                    :
+                                    <div id='wage-solana-button-container' style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <button id='wage-button'
+                                            style={{
+                                                backgroundColor: '#4e44ce',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontWeight: 'bold',
+                                                width: '200px',
+                                                color: 'white',
+                                                padding: '15px 32px',
+                                                textDecoration: 'none',
+                                                fontSize: '16px',
+                                                textAlign: 'center',
+                                                transitionDuration: '0.4s',
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                                if (gameType === gameTypeEnum.Multiplayer) {
+                                                    betSolanaMultiplayer();
+                                                } else {
+                                                    betSolanaSolo();
+                                                }
+                                            }}
+                                        >
+                                            Wage {amountBet} SOL
+                            </button>
+                                    </div>}
+                            </>
+                        }
+
+                    </>}
+
+
+
+                {/* The sentence to explain the modal. */}
+                <p style={{ fontSize: '16px', color: "#ffffff", marginBottom: '0px' }}>
+                    Connect your wallet, wage some Solana, play, and win to get twice your bet!
+                </p>
+
+                {/* The Devnet / Mainnet indicator */}
+                <p style={{ fontWeight: 'bold', fontSize: '16px', color: "black", margin: '0px', marginRight: '5px', textAlign: 'right' }}>
+                    Devnet
+                </p>
+            </div>
             <ToastContainer />
         </>
     )
 }
+
+
+// TODO: Fix the style and apply real for indentations
