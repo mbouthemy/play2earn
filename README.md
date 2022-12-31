@@ -47,6 +47,13 @@ More examples of integration to come!
 Your project needs to use React 17 or later.
 For deployment and production use cases, you also need to use Nextjs 12.2 or later to secure the transaction.
 
+
+### Backend Set-up
+
+In order to make the transaction secure and verify that no one is cheating, play2earn needs to integrate with the backend of [Web2To3](https://web-2-to-3.com).
+Read the [documentation here](https://docs.web-2-to-3.com) to see how to create a game and use the API key associated.
+
+
 ### Installation
 
 Add Play2Earn modal to your project by executing `npm install play2earn` or `yarn add play2earn`.
@@ -87,14 +94,6 @@ finishGameAndGetMoneyWebThree(process.env.NEXT_PUBLIC_WEBSITE_HOST, gameID, winn
     });
 }
 ```
-
-
-
-### Backend Set-up
-
-In order to make the transaction secure and verify that no one is cheating, play2earn needs to integrate with the backend of [Web2To3](https://web-2-to-3.com).
-Read the [documentation here](https://docs.web-2-to-3.com) to see how to create a game and use the API key associated.
-
 
 
 ## Props

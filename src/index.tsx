@@ -555,23 +555,6 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
             });
     }
 
-    // Just return a spinnner in case it is loading.
-    if (isSpinnerLoading) {
-        return (
-            <TailSpin
-                height="80"
-                width="80"
-                color="#6A82FB"
-                ariaLabel="tail-spin-loading"
-                radius="1"
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={true}
-            />
-        )
-    }
-
-
     return (
         <>
             <div id='play2earn-card-container' style={{
@@ -587,13 +570,14 @@ export const Play2EarnModal = ({ gameWebsiteHost, gameID, playerUID, handleGameS
                 <p style={{ fontSize: '18px', color: "#ffffff", fontWeight: 'bold', marginTop: '2px' }}>Play2Earn Modal by Web2to3&copy; </p>
 
                 {!wallet.connected &&
-                    <>
+                    <div id='sol-wallet-container' style={{ display: 'flex', justifyContent: 'center' }}>
                         <WalletMultiButton />
-                    </>
+                    </div>
                 }
 
                 {wallet.connected &&
                     <>
+                        {/* Spinner display during the loading. */}
                         {isSpinnerLoading ?
                             <TailSpin
                                 height="80"
